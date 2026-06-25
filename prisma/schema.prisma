@@ -1,0 +1,141 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String?
+  salt         String?
+  googleId     String?  @unique
+  avatar       String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  watchlist       WatchlistItem[]
+  portfolio       PortfolioHolding[]
+  alertRules      AlertRule[]
+  alertEvents     AlertEvent[]
+  aiAnalyses              AIAnalysis[]
+  screenerPresets         ScreenerPreset[]
+  notificationChannels    NotificationChannel[]
+  notificationRuleMappings NotificationRuleMapping[]
+}
+
+model WatchlistItem {
+  id        String   @id @default(cuid())
+  userId    String
+  stockCode String
+  addedAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, stockCode])
+}
+
+model PortfolioHolding {
+  id              String   @id @default(cuid())
+  userId          String
+  stockCode       String
+  stockName       String
+  sector          String
+  shares          Float
+  averageBuyPrice Float
+  totalInvested   Float
+  addedAt         DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AlertRule {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  label     String
+  stockCode String   @default("")
+  enabled   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  alertEvents AlertEvent[]
+}
+
+model AlertEvent {
+  id            String   @id @default(cuid())
+  userId        String
+  ruleId        String
+  type          String
+  stockCode     String
+  stockName     String
+  sector        String
+  price         Float
+  changePercent Float
+  message       String
+  details       String
+  timestamp     DateTime @default(now())
+  read          Boolean  @default(false)
+
+  user User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rule AlertRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+}
+
+model AIAnalysis {
+  id             String   @id @default(cuid())
+  userId         String
+  stockCode      String
+  stockName      String
+  sector         String
+  action         String
+  confidence     Float
+  sentiment      String
+  recommendation String
+  summary        String
+  technicalSignals String @default("[]")
+  fundamentalSignals String @default("[]")
+  flowSignals    String @default("[]")
+  keyLevels      String   @default("{}")
+  createdAt      DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ScreenerPreset {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  filters   String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model NotificationChannel {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  enabled   Boolean  @default(false)
+  config    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type])
+}
+
+model NotificationRuleMapping {
+  id        String @id @default(cuid())
+  userId    String
+  eventType String
+  channels  String
+  enabled   Boolean @default(true)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventType])
+}

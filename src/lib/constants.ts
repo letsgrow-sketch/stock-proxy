@@ -1,0 +1,99 @@
+export const STOCK_SYMBOLS = [
+  "BBCA","BBRI","TLKM","ASII","BMRI","ADRO","GOTO","UNVR",
+  "ICBP","INTP","SMGR","KLBF","EXCL","CPIN","PGAS","MEDC",
+  "BBNI","JSMR","MNCN","AKRA","TPIA","ITMG","ANTM","BRPT",
+  "WIKA","PTPP","TINS","HRUM","SIDO","TOWR","WOOD","ACES",
+  "ERAA","MTDL","ESSA","FILM",
+]
+
+export const SYARIAH_STOCKS = new Set([
+  "ADRO","AKRA","ANTM","BBNI","BBRI","BMRI","BRPT","CPIN",
+  "ERAA","ESSA","EXCL","HRUM","ICBP","INTP","ITMG","JSMR",
+  "KLBF","MEDC","MNCN","MTDL","PGAS","PTPP","SIDO","SMGR",
+  "TINS","TLKM","TOWR","TPIA","UNVR","WIKA","WOOD","ACES",
+  "ASII",
+])
+
+export const STOCK_NAMES: Record<string, string> = {
+  BBCA: "Bank Central Asia Tbk.",
+  BBRI: "Bank Rakyat Indonesia Tbk.",
+  TLKM: "Telkom Indonesia Tbk.",
+  ASII: "Astra International Tbk.",
+  BMRI: "Bank Mandiri Tbk.",
+  ADRO: "Adaro Energy Tbk.",
+  GOTO: "GoTo Gojek Tokopedia Tbk.",
+  UNVR: "Unilever Indonesia Tbk.",
+  ICBP: "Indofood CBP Sukses Makmur Tbk.",
+  INTP: "Indocement Tunggal Prakarsa Tbk.",
+  SMGR: "Semen Indonesia Tbk.",
+  KLBF: "Kalbe Farma Tbk.",
+  EXCL: "XL Axiata Tbk.",
+  CPIN: "Charoen Pokphand Indonesia Tbk.",
+  PGAS: "Perusahaan Gas Negara Tbk.",
+  MEDC: "Medco Energi Internasional Tbk.",
+  BBNI: "Bank Negara Indonesia Tbk.",
+  JSMR: "Jasa Marga Tbk.",
+  MNCN: "Media Nusantara Citra Tbk.",
+  AKRA: "AKR Corporindo Tbk.",
+  TPIA: "Chandra Asri Pacific Tbk.",
+  ITMG: "Indo Tambangraya Megah Tbk.",
+  ANTM: "Aneka Tambang Tbk.",
+  BRPT: "Barito Pacific Tbk.",
+  WIKA: "Wijaya Karya Tbk.",
+  PTPP: "PP Tbk.",
+  TINS: "Timah Tbk.",
+  HRUM: "Harum Energy Tbk.",
+  SIDO: "Industri Jamu dan Farmasi Sido Tbk.",
+  TOWR: "Sarana Menara Nusantara Tbk.",
+  WOOD: "Integra Indocabinet Tbk.",
+  ACES: "Ace Hardware Indonesia Tbk.",
+  ERAA: "Erajaya Swasembada Tbk.",
+  MTDL: "Metrodata Electronics Tbk.",
+  ESSA: "Essa Industries Indonesia Tbk.",
+  FILM: "MD Pictures Tbk.",
+}
+
+export const STOCK_SECTORS: Record<string, string> = {
+  BBCA: "Financials", BBRI: "Financials", BMRI: "Financials", BBNI: "Financials",
+  TLKM: "Telecommunication", EXCL: "Telecommunication", TOWR: "Telecommunication",
+  ASII: "Consumer Cyclicals", ACES: "Consumer Cyclicals", ERAA: "Consumer Cyclicals",
+  ADRO: "Energy", PGAS: "Energy", MEDC: "Energy", AKRA: "Energy", HRUM: "Energy",
+  ITMG: "Energy", ESSA: "Energy",
+  GOTO: "Technology", MTDL: "Technology",
+  UNVR: "Consumer Non-Cyclicals", ICBP: "Consumer Non-Cyclicals", CPIN: "Consumer Non-Cyclicals",
+  INTP: "Basic Materials", SMGR: "Basic Materials", TPIA: "Basic Materials",
+  ANTM: "Basic Materials", BRPT: "Basic Materials", TINS: "Basic Materials", WOOD: "Basic Materials",
+  KLBF: "Healthcare", SIDO: "Healthcare",
+  JSMR: "Infrastructure", WIKA: "Infrastructure", PTPP: "Infrastructure",
+  MNCN: "Media", FILM: "Media",
+}
+
+export const IHSG_DATA = {
+  value: 6952.38,
+  change: 42.15,
+  changePercent: 0.61,
+}
+
+export const USD_IDR = {
+  value: 16245,
+  change: -35,
+  changePercent: -0.22,
+}
+
+export const SECTOR_INFLOW = {
+  sector: "Financials",
+  netBuy: 1258000000000,
+  topStocks: ["BBCA", "BBRI", "BMRI"],
+}
+
+export const SECTOR_OUTFLOW = {
+  sector: "Basic Materials",
+  netSell: 485000000000,
+  topStocks: ["INTP", "SMGR", "ANTM"],
+}
+
+export const TOP_CONGLO = {
+  name: "Djarum Group",
+  score: 87,
+  companies: ["BBCA", "BMRI", "GOTO"],
+}
