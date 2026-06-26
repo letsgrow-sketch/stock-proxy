@@ -8,10 +8,15 @@ interface MarketOverviewProps {
   data: MarketOverviewData
 }
 
-function MiniChart() {
+function MiniChart({ change }: { change: number }) {
+  const day = new Date().getDate()
+  const bars = Array.from({ length: 14 }, (_, i) => {
+    const seed = (day * (i + 1) * 7) % 29 + 35
+    return Math.max(30, Math.min(90, seed + (change > 0 ? 5 : -5)))
+  })
   return (
     <div className="mt-2.5 h-7 flex items-end gap-[2px]">
-      {[48,52,45,55,50,58,53,49,56,51,47,54,52,49].map((h,i) => (
+      {bars.map((h, i) => (
         <div key={i} className="flex-1 bg-green/20 rounded-sm hover:bg-green/40 transition-colors" style={{ height: `${h}%` }} />
       ))}
     </div>
@@ -39,7 +44,7 @@ export default function MarketOverview({ data }: MarketOverviewProps) {
             {data.usdIdr.value.toLocaleString("id-ID")}
           </span>
         </div>
-        <MiniChart />
+        <MiniChart change={data.usdIdr.change} />
       </div>
 
       <div className="glass rounded-xl p-4 hover:border-green/20 transition-all duration-200">

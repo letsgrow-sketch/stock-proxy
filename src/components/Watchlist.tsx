@@ -7,12 +7,13 @@ import { Stock, View } from "@/types"
 
 interface WatchlistProps {
   items: WatchlistItem[]
+  selectedStock: Stock | null
   setSelectedStock: (s: Stock) => void
   setView: (v: View) => void
   removeItem: (id: string) => void
 }
 
-export default function Watchlist({ items, setSelectedStock, setView, removeItem }: WatchlistProps) {
+export default function Watchlist({ items, selectedStock, setSelectedStock, setView, removeItem }: WatchlistProps) {
   if (items.length === 0) {
     return (
       <div className="animate-fadeIn flex flex-col items-center justify-center py-20 text-text-muted">
@@ -35,7 +36,12 @@ export default function Watchlist({ items, setSelectedStock, setView, removeItem
         {items.map(item => (
           <div
             key={item.id}
-            className="group flex items-center gap-4 p-3.5 rounded-xl border border-border/40 bg-[#0c0d14] hover:bg-[#0c0d14]/80 hover:border-border/60 transition-all duration-150"
+            onClick={() => setSelectedStock(item.stock)}
+            className={`group flex items-center gap-4 p-3.5 rounded-xl border transition-all duration-150 cursor-pointer ${
+              selectedStock?.code === item.stock.code
+                ? "border-accent/40 bg-accent/[0.04]"
+                : "border-border/40 bg-[#0c0d14] hover:bg-[#0c0d14]/80 hover:border-border/60"
+            }`}
           >
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">

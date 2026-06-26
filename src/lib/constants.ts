@@ -68,32 +68,4 @@ export const STOCK_SECTORS: Record<string, string> = {
   MNCN: "Media", FILM: "Media",
 }
 
-export const IHSG_DATA = {
-  value: 6952.38,
-  change: 42.15,
-  changePercent: 0.61,
-}
 
-export const USD_IDR = {
-  value: 16245,
-  change: -35,
-  changePercent: -0.22,
-}
-
-export const SECTOR_INFLOW = {
-  sector: "Financials",
-  netBuy: 1258000000000,
-  topStocks: ["BBCA", "BBRI", "BMRI"],
-}
-
-export const SECTOR_OUTFLOW = {
-  sector: "Basic Materials",
-  netSell: 485000000000,
-  topStocks: ["INTP", "SMGR", "ANTM"],
-}
-
-export const TOP_CONGLO = {
-  name: "Djarum Group",
-  score: 87,
-  companies: ["BBCA", "BMRI", "GOTO"],
-}

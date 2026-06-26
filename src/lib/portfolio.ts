@@ -1,5 +1,10 @@
 import { PortfolioHolding, Stock } from "@/types"
 
+function uid(): string {
+  if (typeof crypto !== "undefined" && crypto.randomUUID) return crypto.randomUUID()
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 10)
+}
+
 const STORAGE_KEY = "stock-screener-portfolio"
 
 export function loadHoldings(): PortfolioHolding[] {
@@ -26,7 +31,7 @@ export function addHolding(
     return averageDown(holdings, stock.code, shares, buyPrice)
   }
   return [{
-    id: crypto.randomUUID(),
+    id: uid(),
     stockCode: stock.code,
     stockName: stock.name,
     sector: stock.sector,

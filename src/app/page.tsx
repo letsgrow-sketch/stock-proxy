@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useMemo, useEffect, useCallback } from "react"
-import { stocks as mockStocks, sectors as mockSectors, defaultWatchlist, fetchAllMarketData, marketOverview as defaultMarketOverview, computeFeatureCards, computeIHSG, computeTotalTurnover, watchlistToFeatureCards } from "@/data/mock"
+import { useState, useMemo, useEffect, useCallback, useRef } from "react"
+import { stocks as mockStocks, sectors as mockSectors, defaultWatchlist, fetchAllMarketData, computeMarketOverview, computeFeatureCards, computeIHSG, computeTotalTurnover, watchlistToFeatureCards, ihsgData as mockIhsgData, usdIdrData as mockUsdIdrData } from "@/data/mock"
 import { Stock, FundamentalData, TechnicalData, FlowData, AlertRule, AlertEvent, View } from "@/types"
 import { loadRules, saveRules, runAlerts, loadEvents, saveEvents } from "@/lib/alerts"
 import { AuthProvider, useAuth } from "@/context/AuthContext"
@@ -29,7 +29,7 @@ import BottomNav from "@/components/BottomNav"
 
 export default function Home() {
   const [view, setView] = useState<View>("table")
-  const [search, setSearch] = useState("")
+  const [searchQuery, setSearchQuery] = useState("")
   const [syariahOnly, setSyariahOnly] = useState(false)
   const [selectedStock, setSelectedStock] = useState<Stock | null>(null)
   const [watchlist, setWatchlist] = useState(defaultWatchlist)
@@ -38,12 +38,15 @@ export default function Home() {
   const [profileOpen, setProfileOpen] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [selectedSector, setSelectedSector] = useState<string | null>(null)
 
   const [stocks, setStocks] = useState(mockStocks)
   const [sectors, setSectors] = useState(mockSectors)
   const [technicalData, setTechnicalData] = useState<Record<string, TechnicalData>>({})
   const [fundamentalData, setFundamentalData] = useState<Record<string, FundamentalData>>({})
   const [flowDataMap, setFlowDataMap] = useState<Record<string, FlowData>>({})
+  const [ihsgState, setIhsgState] = useState(mockIhsgData)
+  const [usdIdrState, setUsdIdrState] = useState(mockUsdIdrData)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [alertRules, setAlertRules] = useState<AlertRule[]>([])
@@ -56,45 +59,58 @@ export default function Home() {
 
   const alertUnread = useMemo(() => alertEvents.filter(e => !e.read).length, [alertEvents])
 
+  const alertRulesRef = useRef(alertRules)
+  alertRulesRef.current = alertRules
+
   const loadData = useCallback(async () => {
     setIsLoading(true)
-    const result = await fetchAllMarketData()
-    setStocks(result.stocks)
-    setSectors(result.sectors)
-    setTechnicalData(result.technicalData)
-    setFundamentalData(result.fundamentalData)
-    setFlowDataMap(result.flowData)
-    setLastUpdated(result.lastUpdated)
-    setIsLoading(false)
+    try {
+      const result = await fetchAllMarketData()
+      setStocks(result.stocks)
+      setSectors(result.sectors)
+      setTechnicalData(result.technicalData)
+      setFundamentalData(result.fundamentalData)
+      setFlowDataMap(result.flowData)
+      if (result.ihsg) setIhsgState(result.ihsg)
+      if (result.usdIdr) setUsdIdrState(result.usdIdr)
+      setLastUpdated(result.lastUpdated)
 
-    const rules = alertRules.length ? alertRules : loadRules()
-    const newEvents = runAlerts(rules, result.stocks, result.technicalData, result.flowData)
-    if (newEvents.length) {
-      setAlertEvents(prev => [...newEvents, ...prev])
+      const rules = alertRulesRef.current.length ? alertRulesRef.current : loadRules()
+      const newEvents = runAlerts(rules, result.stocks, result.technicalData, result.flowData)
+      if (newEvents.length) {
+        setAlertEvents(prev => [...newEvents, ...prev])
+      }
+    } catch (error) {
+      console.error("loadData failed:", error)
+    } finally {
+      setIsLoading(false)
     }
-  }, [alertRules])
+  }, [])
 
   useEffect(() => {
     loadData()
-    const interval = setInterval(loadData, 120000)
+    const interval = setInterval(loadData, 30000)
     return () => clearInterval(interval)
   }, [loadData])
 
   const filteredStocks = useMemo(() => {
-    let result = stocks
-    if (syariahOnly) result = result.filter(s => s.isSyariah)
-    if (search.trim()) {
-      const q = search.toLowerCase()
-      result = result.filter(s =>
-        s.code.toLowerCase().includes(q) || s.name.toLowerCase().includes(q)
-      )
-    }
+    console.log("[DEBUG filteredStocks] running searchQuery='%s' stocks.length=%d", searchQuery, stocks.length)
+    const result = stocks.filter(stock => {
+      const matchSearch =
+        stock.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        stock.name.toLowerCase().includes(searchQuery.toLowerCase())
+      const matchSyariah = !syariahOnly || stock.isSyariah === true
+      const matchSector = !selectedSector || stock.sector === selectedSector
+      return matchSearch && matchSyariah && matchSector
+    })
+    console.log("[DEBUG filteredStocks] before=%d after=%d codes=%s", stocks.length, result.length, result.map(s => s.code).join(","))
     return result
-  }, [search, syariahOnly, stocks])
+  }, [stocks, searchQuery, syariahOnly, selectedSector])
 
-  const ihsgData = useMemo(() => computeIHSG(stocks), [stocks])
+  const ihsgData = useMemo(() => computeIHSG(ihsgState, stocks), [ihsgState, stocks])
   const totalTurnover = useMemo(() => computeTotalTurnover(stocks), [stocks])
   const featureCards = useMemo(() => computeFeatureCards(stocks, technicalData, fundamentalData), [stocks, technicalData, fundamentalData])
+  const marketOverview = useMemo(() => computeMarketOverview(stocks, sectors, usdIdrState), [stocks, sectors, usdIdrState])
   const watchlistCards = useMemo(() => watchlistToFeatureCards(watchlist), [watchlist])
 
   const toggleWatchlist = (stock: Stock) => {
@@ -109,7 +125,7 @@ export default function Home() {
 
   const handleSelectStock = (code: string) => {
     const s = stocks.find(st => st.code === code)
-    if (s) { setSelectedStock(s); setView("table") }
+    if (s) setSelectedStock(s)
   }
 
   function DataSyncer() {
@@ -157,8 +173,8 @@ export default function Home() {
 
       <div className="flex-1 flex flex-col min-w-0 relative pb-[60px] lg:pb-0">
         <Topbar
-          search={search}
-          setSearch={setSearch}
+          search={searchQuery}
+          setSearch={setSearchQuery}
           syariahOnly={syariahOnly}
           setSyariahOnly={setSyariahOnly}
           aiOpen={aiOpen}
@@ -175,7 +191,7 @@ export default function Home() {
           {view === "table" && (
             <div className="space-y-5 animate-fadeIn">
               <HeroSection ihsg={ihsgData} totalTurnover={totalTurnover} />
-              <MarketOverview data={defaultMarketOverview} />
+              <MarketOverview data={marketOverview} />
               <FeatureCards
                 momentum={featureCards.momentum}
                 undervalued={featureCards.undervalued}
@@ -184,6 +200,15 @@ export default function Home() {
                 onViewChange={setView}
                 onSelectStock={handleSelectStock}
               />
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search stock..."
+                  value={searchQuery}
+                  onChange={(e) => { console.log("[DEBUG inlineSearch] onChange value='%s'", e.target.value); setSearchQuery(e.target.value) }}
+                  className="w-full h-9 bg-surface-50 border border-border/50 rounded-lg pl-3 pr-3 text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:border-green/30 focus:ring-1 focus:ring-green/10 transition-all"
+                />
+              </div>
               <StockTable
                 stocks={filteredStocks}
                 selectedStock={selectedStock}
@@ -199,38 +224,45 @@ export default function Home() {
           {view === "watchlist" && (
             <Watchlist
               items={watchlist}
+              selectedStock={selectedStock}
               setSelectedStock={setSelectedStock}
               setView={setView}
               removeItem={(id) => setWatchlist(w => w.filter(i => i.id !== id))}
             />
           )}
 
-          {view === "heatmap" && <Heatmap sectors={sectors} />}
+          {view === "heatmap" && (
+            <Heatmap
+              sectors={sectors}
+              selectedSector={selectedSector}
+              onSectorSelect={setSelectedSector}
+            />
+          )}
 
           {view === "technical" && (
             <TechnicalAnalysis
-              stock={selectedStock || stocks[0]}
+              stock={selectedStock || filteredStocks[0]}
               technicalData={technicalData}
             />
           )}
 
           {view === "fundamental" && (
             <FundamentalAnalysis
-              stock={selectedStock || stocks[0]}
+              stock={selectedStock || filteredStocks[0]}
               fundamentalData={fundamentalData}
             />
           )}
 
           {view === "flow" && (
             <FlowAnalysis
-              stocks={stocks}
+              stocks={filteredStocks}
               flowData={flowDataMap}
             />
           )}
 
           {view === "screener" && (
             <StockScreener
-              stocks={stocks}
+              stocks={filteredStocks}
               technicalData={technicalData}
               fundamentalData={fundamentalData}
               flowData={flowDataMap}
@@ -242,7 +274,7 @@ export default function Home() {
 
           {view === "portfolio" && (
             <Portfolio
-              stocks={stocks}
+              stocks={filteredStocks}
               setSelectedStock={setSelectedStock}
             />
           )}
@@ -251,7 +283,7 @@ export default function Home() {
             <AlertsManager
               rules={alertRules}
               events={alertEvents}
-              stocks={stocks}
+              stocks={filteredStocks}
               onToggleRule={handleToggleRule}
               onSetRuleStock={handleSetRuleStock}
               onReset={handleResetRules}
@@ -259,8 +291,8 @@ export default function Home() {
               onMarkAllRead={handleMarkAllRead}
               onClearEvents={handleClearEvents}
               onSelectStock={(code) => {
-                const s = stocks.find(st => st.code === code)
-                if (s) { setSelectedStock(s); setView("table") }
+                const s = filteredStocks.find(st => st.code === code)
+                if (s) setSelectedStock(s)
               }}
             />
           )}
@@ -269,13 +301,13 @@ export default function Home() {
 
           {view === "strategies" && (
             <StrategyHub
-              stocks={stocks}
+              stocks={filteredStocks}
               technicalData={technicalData}
               fundamentalData={fundamentalData}
               flowData={flowDataMap}
               onSelectStock={(code) => {
-                const s = stocks.find(st => st.code === code)
-                if (s) { setSelectedStock(s); setView("table") }
+                const s = filteredStocks.find(st => st.code === code)
+                if (s) setSelectedStock(s)
               }}
             />
           )}

@@ -1,7 +1,11 @@
 import crypto from "crypto"
 import { prisma } from "@/lib/prisma"
 
-const JWT_SECRET = process.env.JWT_SECRET || "idx-screener-jwt-secret-dev"
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET
+  if (!secret) throw new Error("JWT_SECRET environment variable is required")
+  return secret
+}
 const TOKEN_EXPIRY = 7 * 24 * 60 * 60
 
 export interface SafeUser {
@@ -25,7 +29,8 @@ function base64url(buf: Buffer): string {
 function createJWT(payload: Record<string, unknown>): string {
   const header = base64url(Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT" })))
   const body = base64url(Buffer.from(JSON.stringify({ ...payload, iat: Math.floor(Date.now() / 1000), exp: Math.floor(Date.now() / 1000) + TOKEN_EXPIRY })))
-  const signature = base64url(crypto.createHmac("sha256", JWT_SECRET).update(`${header}.${body}`).digest())
+  const secret = getJwtSecret()
+  const signature = base64url(crypto.createHmac("sha256", secret).update(`${header}.${body}`).digest())
   return `${header}.${body}.${signature}`
 }
 
@@ -33,7 +38,8 @@ function verifyJWT(token: string): Record<string, unknown> | null {
   try {
     const parts = token.split(".")
     if (parts.length !== 3) return null
-    const signature = base64url(crypto.createHmac("sha256", JWT_SECRET).update(`${parts[0]}.${parts[1]}`).digest())
+    const secret = getJwtSecret()
+    const signature = base64url(crypto.createHmac("sha256", secret).update(`${parts[0]}.${parts[1]}`).digest())
     if (signature !== parts[2]) return null
     const payload = JSON.parse(Buffer.from(parts[1], "base64url").toString())
     if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) return null
@@ -155,9 +161,11 @@ export function getTokenFromRequest(request: Request): string | null {
 }
 
 export function setTokenCookie(token: string): string {
-  return `token=${token}; HttpOnly; Path=/; Max-Age=${TOKEN_EXPIRY}; SameSite=Lax`
+  const secure = process.env.NODE_ENV === "production" ? "; Secure" : ""
+  return `token=${token}; HttpOnly; Path=/; Max-Age=${TOKEN_EXPIRY}; SameSite=Strict${secure}`
 }
 
 export function clearTokenCookie(): string {
-  return `token=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax`
+  const secure = process.env.NODE_ENV === "production" ? "; Secure" : ""
+  return `token=; HttpOnly; Path=/; Max-Age=0; SameSite=Strict${secure}`
 }

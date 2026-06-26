@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { fetchHistorical, fetchAggregatedQuotes } from "@/lib/yahoo-finance"
+import { fetchAggregatedQuotes } from "@/lib/yahoo-finance"
 import { STOCK_SYMBOLS } from "@/lib/constants"
 
 export const revalidate = 60
@@ -47,7 +47,14 @@ export async function GET(req: NextRequest) {
     )
 
     return NextResponse.json({ data: flowData, totalNetForeign: total })
-  } catch {
-    return NextResponse.json({ error: "Failed to fetch flow data" }, { status: 500 })
+  } catch (error) {
+    console.error("/api/flow error:", error instanceof Error ? error.message : error)
+
+    return NextResponse.json(
+      {
+        error: error instanceof Error ? error.message : String(error)
+      },
+      { status: 500 }
+    )
   }
 }

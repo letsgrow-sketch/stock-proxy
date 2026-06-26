@@ -1,5 +1,10 @@
 import { AlertRule, AlertEvent, AlertType, Stock, TechnicalData, FlowData } from "@/types"
 
+function uid(): string {
+  if (typeof crypto !== "undefined" && crypto.randomUUID) return crypto.randomUUID()
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 10)
+}
+
 const RULES_KEY = "stock-alert-rules"
 const EVENTS_KEY = "stock-alert-events"
 const TRIGGERED_KEY = "stock-alert-triggered"
@@ -180,7 +185,7 @@ export function runAlerts(
       if (triggered) {
         triggeredIds.add(triggerKey)
         newEvents.push({
-          id: crypto.randomUUID(),
+          id: uid(),
           ruleId: rule.id,
           type: rule.type,
           stockCode: stock.code,

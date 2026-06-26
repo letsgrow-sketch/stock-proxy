@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { Stock, TechnicalData, FundamentalData, SortField, SortDirection, StockScore } from "@/types"
 import { formatCurrency, formatPercent } from "@/data/mock"
 import { Star, ArrowUpDown, TrendingUp, TrendingDown, Minus, ChevronLeft, ChevronRight } from "lucide-react"
@@ -74,6 +74,7 @@ function computeScores(stocks: Stock[], technicalData: Record<string, TechnicalD
       price: s.price, change: s.change, changePercent: s.changePercent,
       score, trend, rsi, ma50, ma200, pbv, per, yield: yieldVal,
       volume: s.volume, marketCap: s.marketCap, isSyariah: s.isSyariah, action,
+      stock: s,
     }
   })
 }
@@ -81,9 +82,13 @@ function computeScores(stocks: Stock[], technicalData: Record<string, TechnicalD
 export default function StockTable({
   stocks, selectedStock, setSelectedStock, isInWatchlist, toggleWatchlist, technicalData = {}, fundamentalData = {},
 }: StockTableProps) {
+  console.log("[DEBUG StockTable] received stocks count=%d codes=%s", stocks.length, stocks.map(s => s.code).join(","))
+
   const [sort, setSort] = useState<{ field: SortField; dir: SortDirection }>({ field: "score", dir: "desc" })
   const [page, setPage] = useState(0)
   const perPage = 15
+
+  useEffect(() => { setPage(0) }, [stocks.length])
 
   const scored = useMemo(() => computeScores(stocks, technicalData, fundamentalData), [stocks, technicalData, fundamentalData])
 
@@ -113,7 +118,7 @@ export default function StockTable({
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
           <h2 className="text-sm font-semibold text-text-primary">Screener</h2>
-          <span className="text-xs text-text-muted">{sorted.length} stocks</span>
+          <span className="text-xs text-text-muted">{stocks.length} stocks</span>
         </div>
         <div className="flex items-center gap-3 text-xs text-text-muted">
           <span className="hidden sm:inline">
@@ -152,17 +157,14 @@ export default function StockTable({
             {paged.map((item) => (
               <tr
                 key={item.code}
-                onClick={() => {
-                  const stock = stocks.find(s => s.code === item.code)
-                  if (stock) setSelectedStock(stock)
-                }}
+                onClick={() => setSelectedStock(item.stock)}
                 className={`border-b border-white/[0.03] hover:bg-white/[0.02] cursor-pointer transition-colors duration-150 ${
                   selectedStock?.code === item.code ? "bg-green/[0.03]" : ""
                 }`}
               >
                 <td className="px-2 py-2.5">
                   <button
-                    onClick={e => { e.stopPropagation(); const s = stocks.find(st => st.code === item.code); if (s) toggleWatchlist(s) }}
+                    onClick={e => { e.stopPropagation(); toggleWatchlist(item.stock) }}
                     className="hover:scale-110 transition-transform p-1 -m-1"
                   >
                     <Star size={11} className={isInWatchlist(item.code) ? "fill-yellow-500 text-yellow-500" : "text-text-muted/40"} />

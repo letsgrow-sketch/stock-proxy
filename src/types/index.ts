@@ -16,6 +16,8 @@ export interface TechnicalData {
   ma50: number
   ma200: number
   ema20: number
+  ema50: number
+  ema200: number
   bb: { upper: number; middle: number; lower: number }
   stochastic: { k: number; d: number }
   recommendation: string
@@ -31,6 +33,9 @@ export interface FundamentalData {
   marketCap: number
   revenueGrowth: number
   netProfitGrowth: number
+  beta: number | null
+  sector: string | null
+  industry: string | null
 }
 
 export interface FlowData {
@@ -153,4 +158,5 @@ export interface StockScore {
   marketCap: number
   isSyariah: boolean
   action: "Buy" | "Hold" | "Sell"
+  stock: Stock
 }
