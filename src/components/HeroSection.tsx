@@ -30,7 +30,7 @@ export default function HeroSection({ ihsg, totalTurnover }: HeroSectionProps) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full lg:w-auto">
-          <div className="glass rounded-xl px-5 py-3.5 min-w-0 flex-1 flex flex-col justify-center overflow-hidden">
+          <div className="glass rounded-xl px-5 py-3.5 min-w-0 flex-1 w-full flex flex-col justify-center overflow-hidden">
             <div className="flex items-center gap-2 mb-1.5">
               <Activity size={13} className="text-text-muted" />
               <span className="text-[10px] text-text-muted font-semibold uppercase tracking-[0.1em]">IHSG</span>
@@ -48,7 +48,7 @@ export default function HeroSection({ ihsg, totalTurnover }: HeroSectionProps) {
             </div>
           </div>
 
-          <div className="glass rounded-xl px-5 py-3.5 min-w-0 flex-1 flex flex-col justify-center overflow-hidden">
+          <div className="glass rounded-xl px-5 py-3.5 min-w-0 flex-1 w-full flex flex-col justify-center overflow-hidden">
             <div className="flex items-center gap-2 mb-1.5">
               <Activity size={13} className="text-text-muted" />
               <span className="text-[10px] text-text-muted font-semibold uppercase tracking-[0.1em]">Turnover</span>

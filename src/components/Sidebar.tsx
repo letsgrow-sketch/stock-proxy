@@ -98,10 +98,10 @@ export default function Sidebar({ view, setView, collapsed, onToggleCollapse, mo
     <>
       <button
         onClick={() => setMobileOpenInternal(true)}
-        className="lg:hidden fixed top-2 left-2 z-50 p-1.5 rounded-lg bg-surface border border-border/50 text-text-secondary hover:text-text-primary transition-colors"
+        className="lg:hidden fixed top-0.5 left-0.5 z-30 p-1 rounded-lg bg-surface border border-border/50 text-text-secondary hover:text-text-primary transition-colors"
         aria-label="Open menu"
       >
-        <Menu size={16} />
+        <Menu size={14} />
       </button>
 
       <aside className={`
