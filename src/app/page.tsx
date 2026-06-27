@@ -97,8 +97,8 @@ export default function Home() {
     console.log("[DEBUG filteredStocks] running searchQuery='%s' stocks.length=%d", searchQuery, stocks.length)
     const result = stocks.filter(stock => {
       const matchSearch =
-        stock.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        stock.name.toLowerCase().includes(searchQuery.toLowerCase())
+       stock?.code?.toLowerCase()?.includes(searchQuery.toLowerCase()) ||
+stock?.name?.toLowerCase()?.includes(searchQuery.toLowerCase())
       const matchSyariah = !syariahOnly || stock.isSyariah === true
       const matchSector = !selectedSector || stock.sector === selectedSector
       return matchSearch && matchSyariah && matchSector
