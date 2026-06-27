@@ -187,7 +187,7 @@ stock?.name?.toLowerCase()?.includes(searchQuery.toLowerCase())
           onNotifications={() => setNotifOpen(true)}
         />
 
-        <main className="flex-1 overflow-auto p-3 md:p-5 lg:p-6 space-y-5">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto px-4 py-3 md:p-5 lg:p-6 space-y-5">
           {view === "table" && (
             <div className="space-y-5 animate-fadeIn">
               <HeroSection ihsg={ihsgData} totalTurnover={totalTurnover} />

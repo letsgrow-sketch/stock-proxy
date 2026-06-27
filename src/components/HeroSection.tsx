@@ -29,14 +29,14 @@ export default function HeroSection({ ihsg, totalTurnover }: HeroSectionProps) {
           </p>
         </div>
 
-        <div className="flex items-stretch gap-3">
-          <div className="glass rounded-xl px-5 py-3.5 min-w-[170px] flex flex-col justify-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full lg:w-auto">
+          <div className="glass rounded-xl px-5 py-3.5 min-w-0 flex-1 flex flex-col justify-center overflow-hidden">
             <div className="flex items-center gap-2 mb-1.5">
               <Activity size={13} className="text-text-muted" />
               <span className="text-[10px] text-text-muted font-semibold uppercase tracking-[0.1em]">IHSG</span>
             </div>
-            <div className="flex items-baseline gap-2.5">
-              <span className="text-xl font-bold font-mono text-text-primary tracking-tight">
+            <div className="flex flex-wrap justify-between items-end gap-1 min-w-0">
+              <span className="text-lg sm:text-xl lg:text-2xl font-bold font-mono text-text-primary tracking-tight">
                 {ihsg.value.toLocaleString("id-ID")}
               </span>
               <span className={`text-sm font-mono font-semibold flex items-center gap-0.5 ${
@@ -48,12 +48,12 @@ export default function HeroSection({ ihsg, totalTurnover }: HeroSectionProps) {
             </div>
           </div>
 
-          <div className="glass rounded-xl px-5 py-3.5 min-w-[170px] flex flex-col justify-center">
+          <div className="glass rounded-xl px-5 py-3.5 min-w-0 flex-1 flex flex-col justify-center overflow-hidden">
             <div className="flex items-center gap-2 mb-1.5">
               <Activity size={13} className="text-text-muted" />
               <span className="text-[10px] text-text-muted font-semibold uppercase tracking-[0.1em]">Turnover</span>
             </div>
-            <span className="text-xl font-bold font-mono text-text-primary tracking-tight">
+            <span className="text-lg sm:text-xl lg:text-2xl font-bold font-mono text-text-primary tracking-tight">
               {formatCurrency(totalTurnover)}
             </span>
           </div>

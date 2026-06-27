@@ -9,6 +9,8 @@ interface SidebarProps {
   setView: (v: View) => void
   collapsed: boolean
   onToggleCollapse: () => void
+  mobileOpen?: boolean
+  onMobileClose?: () => void
 }
 
 const navItems: { id: View; label: string; icon: typeof LayoutGrid }[] = [
@@ -25,8 +27,10 @@ const navItems: { id: View; label: string; icon: typeof LayoutGrid }[] = [
   { id: "backtest", label: "Backtest", icon: History },
 ]
 
-export default function Sidebar({ view, setView, collapsed, onToggleCollapse }: SidebarProps) {
-  const [mobileOpen, setMobileOpen] = useState(false)
+export default function Sidebar({ view, setView, collapsed, onToggleCollapse, mobileOpen: mobileOpenProp, onMobileClose }: SidebarProps) {
+  const [mobileOpenInternal, setMobileOpenInternal] = useState(false)
+  const mobileOpen = mobileOpenProp ?? mobileOpenInternal
+  const closeMobile = onMobileClose ?? (() => setMobileOpenInternal(false))
 
   const sidebarContent = (
     <>
@@ -46,7 +50,7 @@ export default function Sidebar({ view, setView, collapsed, onToggleCollapse }: 
         {navItems.map(item => (
           <button
             key={item.id}
-            onClick={() => { setView(item.id); setMobileOpen(false) }}
+            onClick={() => { setView(item.id); closeMobile() }}
             className={`w-full flex items-center rounded-lg text-sm font-medium transition-all duration-150 ${
               collapsed
                 ? "justify-center h-10 px-0"
@@ -93,11 +97,11 @@ export default function Sidebar({ view, setView, collapsed, onToggleCollapse }: 
   return (
     <>
       <button
-        onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed top-3 left-3 z-50 p-2.5 rounded-lg bg-surface border border-border/50 text-text-secondary hover:text-text-primary transition-colors"
+        onClick={() => setMobileOpenInternal(true)}
+        className="lg:hidden fixed top-2 left-2 z-50 p-1.5 rounded-lg bg-surface border border-border/50 text-text-secondary hover:text-text-primary transition-colors"
         aria-label="Open menu"
       >
-        <Menu size={18} />
+        <Menu size={16} />
       </button>
 
       <aside className={`
@@ -129,7 +133,7 @@ export default function Sidebar({ view, setView, collapsed, onToggleCollapse }: 
               <p className="text-[9px] text-text-muted font-medium uppercase tracking-wider">IDX Screener</p>
             </div>
           </div>
-          <button onClick={() => setMobileOpen(false)} className="p-1.5 text-text-muted hover:text-text-primary rounded-lg hover:bg-white/[0.05]">
+          <button onClick={closeMobile} className="p-1.5 text-text-muted hover:text-text-primary rounded-lg hover:bg-white/[0.05]">
             <X size={18} />
           </button>
         </div>
@@ -137,7 +141,7 @@ export default function Sidebar({ view, setView, collapsed, onToggleCollapse }: 
           {navItems.map(item => (
             <button
               key={item.id}
-              onClick={() => { setView(item.id); setMobileOpen(false) }}
+              onClick={() => { setView(item.id); closeMobile() }}
               className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
                 view === item.id
                   ? "bg-green/10 text-green"
@@ -152,7 +156,7 @@ export default function Sidebar({ view, setView, collapsed, onToggleCollapse }: 
       </div>
 
       {mobileOpen && (
-        <div className="fixed inset-0 z-40 bg-black/60 lg:hidden" onClick={() => setMobileOpen(false)} />
+        <div className="fixed inset-0 z-40 bg-black/60 lg:hidden" onClick={closeMobile} />
       )}
     </>
   )

@@ -24,8 +24,8 @@ export default function Topbar({ search, setSearch, syariahOnly, setSyariahOnly,
   const { user } = useAuth()
 
   return (
-    <header className="sticky top-0 z-20 h-14 bg-surface/80 backdrop-blur-xl border-b border-border/50 flex items-center justify-between px-4 lg:pl-4 lg:pr-6 shrink-0">
-      <div className="flex items-center gap-3 flex-1 max-w-md">
+    <header className="sticky top-0 z-20 h-14 bg-surface/80 backdrop-blur-xl border-b border-border/50 flex items-center gap-2 pl-14 lg:pl-4 pr-3 sm:pr-4 lg:pr-6 shrink-0 min-w-0">
+      <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
         <div className="relative flex-1">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
           <input
@@ -42,7 +42,7 @@ export default function Topbar({ search, setSearch, syariahOnly, setSyariahOnly,
         <SyariahToggle enabled={syariahOnly} onChange={setSyariahOnly} />
       </div>
 
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1.5 shrink-0">
         {isLoading && (
           <div className="flex items-center gap-1.5 px-2 py-1">
             <span className="w-1.5 h-1.5 rounded-full bg-green/60 animate-pulse-dot" />

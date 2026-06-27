@@ -40,7 +40,7 @@ export default function MarketOverview({ data }: MarketOverviewProps) {
           </span>
         </div>
         <div className="flex items-baseline gap-1.5">
-          <span className="text-xl font-bold font-mono text-text-primary tracking-tight">
+          <span className="text-lg sm:text-xl font-bold font-mono text-text-primary tracking-tight">
             {data.usdIdr.value.toLocaleString("id-ID")}
           </span>
         </div>
@@ -54,7 +54,7 @@ export default function MarketOverview({ data }: MarketOverviewProps) {
             <span className="text-[10px] text-text-muted font-semibold uppercase tracking-[0.1em]">Sektor Inflow</span>
           </div>
         </div>
-        <span className="text-xl font-bold font-mono text-green tracking-tight">{data.topInflow.sector}</span>
+        <span className="text-base sm:text-xl font-bold font-mono text-green tracking-tight break-words">{data.topInflow.sector}</span>
         <p className="text-xs text-text-muted mt-1.5">Net Buy: <span className="font-mono text-text-secondary">{formatCurrency(data.topInflow.netBuy)}</span></p>
         <div className="flex flex-wrap gap-1.5 mt-3">
           {data.topInflow.topStocks.map(s => (
@@ -70,7 +70,7 @@ export default function MarketOverview({ data }: MarketOverviewProps) {
             <span className="text-[10px] text-text-muted font-semibold uppercase tracking-[0.1em]">Sektor Outflow</span>
           </div>
         </div>
-        <span className="text-xl font-bold font-mono text-red tracking-tight">{data.topOutflow.sector}</span>
+        <span className="text-base sm:text-xl font-bold font-mono text-red tracking-tight break-words">{data.topOutflow.sector}</span>
         <p className="text-xs text-text-muted mt-1.5">Net Sell: <span className="font-mono text-text-secondary">{formatCurrency(data.topOutflow.netSell)}</span></p>
         <div className="flex flex-wrap gap-1.5 mt-3">
           {data.topOutflow.topStocks.map(s => (
@@ -86,7 +86,7 @@ export default function MarketOverview({ data }: MarketOverviewProps) {
             <span className="text-[10px] text-text-muted font-semibold uppercase tracking-[0.1em]">Konglomerasi</span>
           </div>
         </div>
-        <span className="text-xl font-bold font-mono text-text-primary tracking-tight">{data.topConglomerate.name}</span>
+        <span className="text-base sm:text-xl font-bold font-mono text-text-primary tracking-tight break-words">{data.topConglomerate.name}</span>
         <div className="flex items-center gap-2 mt-2">
           <span className="text-xs text-text-muted">Score</span>
           <span className="text-sm font-mono font-bold text-green">{data.topConglomerate.score}</span>
