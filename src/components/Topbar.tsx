@@ -33,10 +33,10 @@ export default function Topbar({ search, setSearch, syariahOnly, setSyariahOnly,
             value={search}
             onChange={e => { console.log("[DEBUG Topbar] onChange value='%s' target=%O", e.target.value, e.target); setSearch(e.target.value) }}
             placeholder="Search stocks..."
-            className="w-full h-8 bg-surface-50 border border-border/50 rounded-lg pl-8 pr-3
-                       text-xs text-text-primary placeholder:text-text-muted
-                       focus:outline-none focus:border-green/30 focus:ring-1 focus:ring-green/10
-                       transition-all"
+           className="flex-1 min-w-0 h-8 bg-surface-50 border border-border/50 rounded-lg pl-8 pr-3
+           text-xs text-text-primary placeholder:text-text-muted
+           focus:outline-none focus:border-green/30 focus:ring-1 focus:ring-green/10
+           transition-all"
           />
         </div>
         <SyariahToggle enabled={syariahOnly} onChange={setSyariahOnly} />
