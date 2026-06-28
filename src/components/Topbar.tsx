@@ -24,13 +24,9 @@ export default function Topbar({ search, setSearch, syariahOnly, setSyariahOnly,
   const { user } = useAuth()
 
   return (
-<<<<<<< HEAD
-    <header className="sticky top-0 z-20 h-14 bg-surface/80 backdrop-blur-xl border-b border-border/50 flex items-center gap-2 pl-14 lg:pl-4 pr-3 sm:pr-4 lg:pr-6 shrink-0 min-w-0">
-      <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
-=======
-    <header className="sticky top-0 z-20 h-14 bg-surface/80 backdrop-blur-xl border-b border-border/50 flex items-center justify-between px-4 lg:pl-4 lg:pr-6 shrink-0">
-      <div className="flex items-center gap-2 flex-1 min-w-0 max-w-full lg:max-w-md">
->>>>>>> 6e3022d (improve responsive mobile layout)
+  <header className="sticky top-0 z-20 h-14 bg-surface/80 backdrop-blur-xl border-b border-border/50 flex items-center gap-2 pl-14 lg:pl-4 pr-3 sm:pr-4 lg:pr-6 shrink-0 min-w-0">
+    <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0 max-w-full lg:max-w-md">
+      <div className="relative flex-1">
         <div className="relative flex-1">
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
          <input
