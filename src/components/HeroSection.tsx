@@ -67,7 +67,7 @@ export default function HeroSection({
     </div>
   </div>
 
-  <div className="glass rounded-xl px-5 py-3.5 min-w-0 flex-1 w-full flex flex-col justify-center overflow-hidden">
+    <div className="glass rounded-xl px-5 py-3.5 min-w-0 flex-1 w-full flex flex-col justify-center overflow-hidden">
     <div className="flex items-center gap-2 mb-1.5">
       <Activity size={13} className="text-text-muted" />
       <span className="text-[10px] text-text-muted font-semibold uppercase tracking-[0.1em]">
@@ -80,11 +80,7 @@ export default function HeroSection({
     </span>
   </div>
 </div>
-              {formatCurrency(totalTurnover)}
-            </span>
 
-          </div>
-        </div>
       </div>
     </div>
   )
